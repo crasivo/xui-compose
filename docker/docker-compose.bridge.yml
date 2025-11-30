@@ -24,10 +24,17 @@ services:
           cpus: 1
           memory: 1G
     hostname: xui
-    network_mode: host
+    networks:
+      - public
     cap_add:
       - NET_ADMIN
     devices:
       - /dev/net/tun
     volumes:
       - ./volumes/xui_data:/etc/x-ui:cached
+
+networks:
+  public:
+    driver: bridge
+    internal: false
+    name: xui_public

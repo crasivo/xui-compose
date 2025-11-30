@@ -18,7 +18,7 @@ ARG XRAY_UID=1000
 
 ENV XUI_DIR=/usr/local/x-ui
 
-COPY ./docker/images/install /opt/docker
+COPY ./docker/images/xui/install /opt/docker
 
 RUN set -eux \
     # Add apk repos \

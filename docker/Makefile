@@ -29,36 +29,50 @@ _check_volumes:
 
 build: _check_compose
 	docker compose -f $(DOCKER_DIR)/docker-compose.yml build
+build-bridge:
+	docker compose -f $(DOCKER_DIR)/docker-compose.bridge.yml build
 build-host:
 	docker compose -f $(DOCKER_DIR)/docker-compose.host.yml build
 
 up: _check_compose
 	docker compose -f $(DOCKER_DIR)/docker-compose.yml up -d
+up-bridge:
+	docker compose -f $(DOCKER_DIR)/docker-compose.bridge.yml up -d
 up-host:
 	docker compose -f $(DOCKER_DIR)/docker-compose.host.yml up -d
 
 down: _check_compose
 	docker compose -f $(DOCKER_DIR)/docker-compose.yml down
+down-bridge:
+	docker compose -f $(DOCKER_DIR)/docker-compose.bridge.yml down
 down-host:
 	docker compose -f $(DOCKER_DIR)/docker-compose.host.yml down
 
 start: _check_compose
 	docker compose -f $(DOCKER_DIR)/docker-compose.yml start
+start-bridge:
+	docker compose -f $(DOCKER_DIR)/docker-compose.bridge.yml start
 start-host:
 	docker compose -f $(DOCKER_DIR)/docker-compose.host.yml start
 
 stop: _check_compose
 	docker compose -f $(DOCKER_DIR)/docker-compose.yml stop
+stop-bridge:
+	docker compose -f $(DOCKER_DIR)/docker-compose.bridge.yml stop
 stop-host:
 	docker compose -f $(DOCKER_DIR)/docker-compose.host.yml stop
 
 restart: _check_compose
 	docker compose -f $(DOCKER_DIR)/docker-compose.yml restart
+restart-bridge:
+	docker compose -f $(DOCKER_DIR)/docker-compose.bridge.yml restart
 restart-host:
 	docker compose -f $(DOCKER_DIR)/docker-compose.host.yml restart
 
 ps: _check_compose
 	docker compose -f $(DOCKER_DIR)/docker-compose.yml ps
+ps-bridge:
+	docker compose -f $(DOCKER_DIR)/docker-compose.bridge.yml ps
 ps-host:
 	docker compose -f $(DOCKER_DIR)/docker-compose.host.yml ps
 
@@ -72,6 +86,8 @@ _before_run: \
 
 run: _before_run \
 	up
+run-host: _before_run \
+	up-bridge
 run-host: _before_run \
 	up-host
 

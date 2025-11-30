@@ -16,6 +16,7 @@ FROM alpine:${ALPINE_VERSION}
 ENV XUI_DIR=/usr/local/x-ui
 
 COPY ./docker/images/xui/install /opt/docker
+COPY --from=source /app $XUI_DIR
 
 RUN set -eux \
     # Add apk repos \
@@ -34,12 +35,10 @@ RUN set -eux \
     && ln -sf /dev/stderr /var/log/xray/error.log \
     # Prepare docker entrypoint \
     && mkdir -p /docker-entrypoint.d \
+    && ln -sf /opt/docker/bin/xui-bootstrap.sh /docker-entrypoint.d/docker-entrypoint.sh \
     && ln -sf /opt/docker/bin/docker-entrypoint.sh /docker-entrypoint.sh \
     # Cleanup docker image \
     && /opt/docker/bin/docker-image-cleanup.sh
-
-COPY --from=source /app $XUI_DIR
-COPY --from=source /usr/bin/x-ui $XUI_DIR/x-ui.sh
 
 STOPSIGNAL SIGTERM
 

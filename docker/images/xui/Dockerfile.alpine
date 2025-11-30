@@ -35,7 +35,7 @@ RUN set -eux \
     && ln -sf /dev/stderr /var/log/xray/error.log \
     # Prepare docker entrypoint \
     && mkdir -p /docker-entrypoint.d \
-    && ln -sf /opt/docker/bin/xui-bootstrap.sh /docker-entrypoint.d/docker-entrypoint.sh \
+    && ln -sf /opt/docker/bin/xui-bootstrap.sh /docker-entrypoint.d/xui-bootstrap.sh \
     && ln -sf /opt/docker/bin/docker-entrypoint.sh /docker-entrypoint.sh \
     # Cleanup docker image \
     && /opt/docker/bin/docker-image-cleanup.sh

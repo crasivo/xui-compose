@@ -28,7 +28,7 @@ services:
       - public
     ports:
       - "2053:2053/tcp" # Panel (without reverse proxy)
-      - "2056:2056/tcp" # Subscribe (without reverse proxy)
+      - "2096:2096/tcp" # Subscribe (without reverse proxy)
     cap_add:
       - NET_ADMIN
     devices:

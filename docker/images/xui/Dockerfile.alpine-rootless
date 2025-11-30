@@ -59,7 +59,7 @@ USER xray
 
 VOLUME $XUI_DIR
 
-EXPOSE 2053/tcp 2056/tcp
+EXPOSE 2053/tcp 2096/tcp
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 

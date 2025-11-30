@@ -24,6 +24,7 @@ RUN set -eux \
     && apk add --no-cache --update \
         bash \
         ca-certificates \
+        curl \
         tzdata \
     && update-ca-certificates \
     # Prepare xray logs \

@@ -27,6 +27,7 @@ RUN set -eux \
     && apk add --no-cache --update \
         bash \
         ca-certificates \
+        curl \
         tzdata \
     && update-ca-certificates \
     # Create user & group \
@@ -62,4 +63,4 @@ EXPOSE 2053/tcp 2056/tcp
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-CMD ["x-ui"]
+CMD ["/home/xray/x-ui/x-ui"]

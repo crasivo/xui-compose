@@ -35,7 +35,7 @@ RUN set -eux \
     && if [ -z "$(getent group xray)" ]; then addgroup -g $XRAY_GID xray; fi \
     && if [ -z "$(getent passwd xray)" ]; then adduser -h /home/xray -s /bin/bash -D -u $XRAY_UID -G xray xray; fi \
     # Prepare binaries \
-    && ls -sf $XUI_DIR/x-ui /usr/local/bin/x-ui \
+    && ln -sf $XUI_DIR/x-ui /usr/local/bin/x-ui \
     # Prepare xray logs \
     && mkdir -p /var/log/xray \
     && ln -sf /dev/stdout /var/log/3xui.log \

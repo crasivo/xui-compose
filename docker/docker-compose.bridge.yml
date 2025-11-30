@@ -8,7 +8,7 @@ name: xui
 
 services:
   xui:
-    image: crasivo/xui:latest
+    image: crasivo/xui:rootless
     build:
       context: ../
       dockerfile: docker/images/xui/Dockerfile.alpine
@@ -34,7 +34,7 @@ services:
     devices:
       - /dev/net/tun
     volumes:
-      - ./volumes/xui_data:/etc/x-ui:cached
+      - xui_data:/etc/x-ui:cached
     labels:
       - "traefik.enable=true"
       # Panel: HTTP (permanent redirect)
@@ -57,6 +57,9 @@ services:
       - "traefik.http.routers.xui-sub-https.tls=true"
       - "traefik.http.routers.xui-sub-https.service=xui-sub-https"
       - "traefik.http.services.xui-sub-https.loadBalancer.server.port=2056"
+
+volumes:
+  xui_data:
 
 networks:
   public:

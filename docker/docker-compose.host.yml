@@ -8,7 +8,7 @@ name: xui
 
 services:
   xui:
-    image: crasivo/xui:latest
+    image: crasivo/xui:rootless
     build:
       context: ../
       dockerfile: docker/images/xui/Dockerfile.alpine
@@ -30,4 +30,7 @@ services:
     devices:
       - /dev/net/tun
     volumes:
-      - ./volumes/xui_data:/etc/x-ui:cached
+      - xui_data:/etc/x-ui:cached
+
+volumes:
+  xui_data:

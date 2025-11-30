@@ -26,12 +26,37 @@ services:
     hostname: xui
     networks:
       - public
+    ports:
+      - "2053:2053/tcp" # Panel (without reverse proxy)
+      - "2056:2056/tcp" # Subscribe (without reverse proxy)
     cap_add:
       - NET_ADMIN
     devices:
       - /dev/net/tun
     volumes:
       - ./volumes/xui_data:/etc/x-ui:cached
+    labels:
+      - "traefik.enable=true"
+      # Panel: HTTP (permanent redirect)
+      - "traefik.http.routers.xui-panel-http.rule=Host(`${XUI_PUBLIC_HOST:-xui.traefik.docker}`)"
+      - "traefik.http.routers.xui-panel-http.entryPoints=http"
+      - "traefik.http.routers.xui-panel-http.middlewares=redirect-to-https@file"
+      # Panel: HTTPS
+      - "traefik.http.routers.xui-panel-https.rule=Host(`${XUI_PUBLIC_HOST:-xui.traefik.docker}`)"
+      - "traefik.http.routers.xui-panel-https.entryPoints=https"
+      - "traefik.http.routers.xui-panel-https.tls=true"
+      - "traefik.http.routers.xui-panel-https.service=xui-panel-https"
+      - "traefik.http.services.xui-panel-https.loadBalancer.server.port=2053"
+      # Subscription: HTTP (permanent redirect)
+      - "traefik.http.routers.xui-sub-http.rule=Host(`${XUI_PUBLIC_HOST:-xui.traefik.docker}`)&&Path(`/sub/`)"
+      - "traefik.http.routers.xui-sub-http.entryPoints=http"
+      - "traefik.http.routers.xui-sub-http.middlewares=redirect-to-https@file"
+      # Subscription: HTTPS
+      - "traefik.http.routers.xui-sub-https.rule=Host(`${XUI_PUBLIC_HOST:-xui.traefik.docker}`)&&Path(`/sub/`)"
+      - "traefik.http.routers.xui-sub-https.entryPoints=https"
+      - "traefik.http.routers.xui-sub-https.tls=true"
+      - "traefik.http.routers.xui-sub-https.service=xui-sub-https"
+      - "traefik.http.services.xui-sub-https.loadBalancer.server.port=2056"
 
 networks:
   public:

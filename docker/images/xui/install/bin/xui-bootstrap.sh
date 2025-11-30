@@ -20,10 +20,10 @@ XUI_BASE_WEB_PATH=${XUI_BASE_WEB_PATH:-/}
 # First start
 if [ ! -f /etc/x-ui/x-ui.db ]; then
     if [ -n "$XUI_INIT_ADMIN_LOGIN" ]; then
-        x-ui setting -username "$XUI_PANEL_PASSWORD"
+        x-ui setting -username "$"
     fi
-    if [ -n "$XUI_PANEL_PASSWORD" ]; then
-        x-ui setting -password "$XUI_PANEL_PASSWORD"
+    if [ -n "$XUI_INIT_ADMIN_PASSWORD" ]; then
+        x-ui setting -password "$XUI_INIT_ADMIN_PASSWORD"
     fi
 fi
 

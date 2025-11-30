@@ -48,7 +48,7 @@ RUN set -eux \
     && /opt/docker/bin/docker-image-cleanup.sh
 
 COPY --from=source --chown=xray:xray /app $XUI_DIR
-COPY --from=source --chown=xray:xray /usr/bin/xui /usr/bin/xui
+COPY --from=source --chown=xray:xray /usr/bin/xxui /usr/bin/x-ui
 
 STOPSIGNAL SIGTERM
 

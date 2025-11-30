@@ -1,0 +1,33 @@
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Extended configuration for N8N.
+# ----------------------------------------------------------------
+# $ make run-host
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+name: xui
+
+services:
+  xui:
+    image: crasivo/xui
+    build:
+      context: .
+      dockerfile: images/xui/Dockerfile.alpine
+      args:
+        - "XRAY_GID=1000" # id -g
+        - "XRAY_UID=1000" # id -u
+        - "XUI_RELEASE=latest"
+    container_name: xui
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 1G
+    hostname: xui
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    volumes:
+      - ./volumes/xui_data:/etc/x-ui:cached

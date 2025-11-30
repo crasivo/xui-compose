@@ -1,0 +1,64 @@
+# ----------------------------------------------------------------
+# Declare source image
+# ----------------------------------------------------------------
+
+ARG XUI_RELEASE=latest
+ARG ALPINE_VERSION=3.22
+
+FROM ghcr.io/mhsanaei/3x-ui:${XUI_RELEASE} AS source
+
+# ----------------------------------------------------------------
+# Final
+# ----------------------------------------------------------------
+
+FROM alpine:${ALPINE_VERSION}
+
+ARG XRAY_GID=1000
+ARG XRAY_UID=1000
+
+ENV XUI_DIR=/usr/local/x-ui
+
+COPY ./docker/images/install /opt/docker
+
+RUN set -eux \
+    # Add apk repos \
+    && echo "https://dl-cdn.alpinelinux.org/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/community/" >> /etc/apk/repositories \
+    # Install apk packages \
+    && apk add --no-cache --update \
+        bash \
+        ca-certificates \
+        tzdata \
+    && update-ca-certificates \
+    # Create user & group \
+    && if [ -z "$(getent group xray)" ]; then addgroup -g $XRAY_GID xray; fi \
+    && if [ -z "$(getent passwd xray)" ]; then adduser -h /home/xray -s /bin/bash -D -u $XRAY_UID -G xray xray; fi \
+    # Prepare xray logs \
+    && mkdir -p /var/log/xray \
+    && ln -sf /dev/stdout /var/log/3xui.log \
+    && ln -sf /dev/stdout /var/log/xray/access.log \
+    && ln -sf /dev/stderr /var/log/xray/error.log \
+    && chown -R xray:xray /var/log/xray \
+    && mkdir -p /etc/x-ui \
+    && chown -R xray:xray $XUI_DIR /etc/x-ui \
+    # Prepare docker entrypoint \
+    && mkdir -p /docker-entrypoint.d \
+    && ln -sf /opt/docker/bin/docker-entrypoint.sh /docker-entrypoint.sh \
+    # Cleanup docker image \
+    && /opt/docker/bin/docker-image-cleanup.sh
+
+COPY --from=source --chown=xray:xray /app $XUI_DIR
+COPY --from=source --chown=xray:xray /usr/bin/xui /usr/bin/xui
+
+STOPSIGNAL SIGTERM
+
+WORKDIR $XUI_DIR
+
+USER xray
+
+VOLUME $XUI_DIR
+
+EXPOSE 2053/tcp 2056/tcp
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["/usr/local/x-ui/x-ui"]

@@ -1,0 +1,15 @@
+# IDE
+.idea/
+.vscode/
+
+# Secrets
+*.key
+*.pass
+
+# Environments
+.env
+.env.local
+
+# Misc
+.DS_Store
+Thumbs.db

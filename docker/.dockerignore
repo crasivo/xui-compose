@@ -1,0 +1,14 @@
+# Hidden
+/log*
+/secret*
+/volume*
+
+# Environment
+.env
+.env.loc*
+.env.prod*
+
+# Misc
+.DS_Store
+.gitkeep
+Thumbs.db

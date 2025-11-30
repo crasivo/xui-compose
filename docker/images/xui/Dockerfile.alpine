@@ -38,7 +38,8 @@ RUN set -eux \
     && ln -sf /dev/stdout /var/log/xray/access.log \
     && ln -sf /dev/stderr /var/log/xray/error.log \
     && chown -R xray:xray /var/log/xray \
-    && mkdir -p /etc/x-ui \
+    # Prepare permissions \
+    && mkdir -p /etc/x-ui $XUI_DIR \
     && chown -R xray:xray $XUI_DIR /etc/x-ui \
     # Prepare docker entrypoint \
     && mkdir -p /docker-entrypoint.d \

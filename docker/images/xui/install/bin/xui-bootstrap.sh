@@ -7,7 +7,6 @@ set -o errexit
 # Settings
 # ----------------------------------------------------------------
 
-XUI_DIR=${XUI_DIR:-/usr/local/x-ui}
 XUI_INIT_ADMIN_LOGIN=${XUI_INIT_ADMIN_LOGIN:-}
 XUI_INIT_ADMIN_PASSWORD=${XUI_INIT_ADMIN_PASSWORD:-}
 XUI_PANEL_LISTEN_PORT=${XUI_PANEL_LISTEN_PORT:-2053}

@@ -63,4 +63,4 @@ EXPOSE 2053/tcp 2096/tcp
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-CMD ["/home/xray/x-ui/x-ui"]
+CMD ["/usr/local/x-ui/x-ui"]

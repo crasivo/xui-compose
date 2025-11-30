@@ -16,7 +16,7 @@ FROM alpine:${ALPINE_VERSION}
 ARG XRAY_GID=1000
 ARG XRAY_UID=1000
 
-ENV XUI_DIR=/home/xray/x-ui
+ENV XUI_DIR=/usr/local/x-ui
 
 COPY ./docker/images/xui/install /opt/docker
 
@@ -49,7 +49,7 @@ RUN set -eux \
     && /opt/docker/bin/docker-image-cleanup.sh
 
 COPY --from=source --chown=xray:xray /app $XUI_DIR
-COPY --from=source --chown=xray:xray /usr/bin/x-ui /usr/bin/x-ui
+COPY --from=source /usr/bin/x-ui $XUI_DIR/x-ui.sh
 
 STOPSIGNAL SIGTERM
 

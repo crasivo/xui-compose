@@ -11,7 +11,7 @@ services:
     image: crasivo/xui:rootless
     build:
       context: ../
-      dockerfile: docker/images/xui/Dockerfile.alpine
+      dockerfile: docker/images/xui/Dockerfile.alpine-rootless
       args:
         - "XRAY_GID=1000" # id -g
         - "XRAY_UID=1000" # id -u

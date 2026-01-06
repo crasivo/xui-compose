@@ -33,9 +33,9 @@ LABEL \
     org.opencontainers.image.authors="MHSanaei (Original), Crasivo Dev (Docker Maintainer)" \
     org.opencontainers.image.title="3X-UI Panel" \
     org.opencontainers.image.description="Multi-protocol control panel for Xray, supporting VLESS, VMess, Trojan, ShadowTLS, and Hysteria2. Built from MHSanaei/3x-ui." \
-    org.opencontainers.image.url="https://github.com/MHSanaei/3x-ui" \
-    org.opencontainers.image.source="https://github.com/MHSanaei/3x-ui" \
-    org.opencontainers.image.documentation="https://github.com/MHSanaei/3x-ui/blob/main/README.md" \
+    org.opencontainers.image.url="https://github.com/crasivo/xui-compose" \
+    org.opencontainers.image.source="https://github.com/crasivo/xui-compose" \
+    org.opencontainers.image.documentation="https://github.com/crasivo/xui-compose/blob/main/README.md" \
     org.opencontainers.image.version="${XUI_VERSION}" \
     org.opencontainers.image.created="${BUILD_DATE}" \
     org.opencontainers.image.licenses="GPL-3.0" \

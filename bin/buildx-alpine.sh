@@ -33,6 +33,16 @@ BUILDX_ARGS=''
 # Functions
 # ----------------------------------------------------------------
 
+function _define_alpine_version() {
+    # shellcheck disable=SC2155
+    local alpine_version=$(curl -s "https://hub.docker.com/v2/repositories/library/alpine/tags?page_size=10" | jq -r '.results[] | select(.name | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")) | .name' | head -n 1)
+    if [[ -z "$alpine_version" ]] || [[ "$alpine_version" == 'null' ]]; then
+        echo "[ERROR] Unknown Alpine version";
+    fi
+
+    ALPINE_VERSION="$alpine_version"
+}
+
 function _build_latest_version_alpine() {
     local full_version="${2#v}"
     # shellcheck disable=SC2155
@@ -216,7 +226,7 @@ for i in "$@"; do
 done
 
 # Check variables
-[[ -z "$ALPINE_VERSION" ]] && ALPINE_VERSION="$(curl -s https://api.github.com/repos/alpinelinux/docker-alpine/tags | jq -r '.[0].name')"
+[[ -z "$ALPINE_VERSION" ]] && _define_alpine_version
 [[ -z "$DOCKER_BUILD_DATE" ]] && DOCKER_BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 [[ -z "$GIT_COMMIT_SHA" ]] && GIT_COMMIT_SHA="$(git rev-parse --short HEAD)"
 

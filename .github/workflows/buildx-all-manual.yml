@@ -31,7 +31,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run build script
-        run: |
-          ./bin/buildx-debian.sh ${{ github.event.inputs.buildx_action }} --push --github --dockerhub;
-          ./bin/buildx-alpine.sh ${{ github.event.inputs.buildx_action }} --push --github --dockerhub;
+      - name: Build Debian images
+        run: ./bin/buildx-debian.sh ${{ github.event.inputs.buildx_action }} --push --github --dockerhub
+      - name: Build Alpine images
+        run: ./bin/buildx-alpine.sh ${{ github.event.inputs.buildx_action }} --push --github --dockerhub

@@ -72,6 +72,17 @@ services:
     hostname: 3x-ui
 ```
 
+Пример кастомизации `healthcheck` с указанием порта `13890` и секретным URL (путь) `/secret-path/`:
+
+```yaml
+healthcheck:
+  test: [ "CMD-SHELL", "curl -sf http://localhost:13890/secret-path/ -o /dev/null || exit 1"]
+  retries: 5
+  interval: 15s
+  timeout: 15s
+  start_period: 15s
+```
+
 ## 🕹️ Эксплуатация
 
 ### Переменные окружения

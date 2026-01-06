@@ -70,6 +70,17 @@ services:
     hostname: 3x-ui
 ```
 
+Example of customizing `healthcheck` with the port `13890` and a secret URL (path) `/secret-path/`:
+
+```yaml
+healthcheck:
+  test: [ "CMD-SHELL", "curl -sf http://localhost:13890/secret-path/ -o /dev/null || exit 1"]
+  retries: 5
+  interval: 15s
+  timeout: 15s
+  start_period: 15s
+```
+
 ## 🕹️ Usage
 
 ### Environment variables

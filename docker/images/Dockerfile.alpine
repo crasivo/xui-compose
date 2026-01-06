@@ -77,5 +77,5 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 
 CMD ["/usr/local/x-ui/x-ui", "run"]
 
-HEALTHCHECK --interval=15s --timeout=15s --start-period=15s \
-    CMD curl -I -f 'http://localhost:2053' || exit 1
+HEALTHCHECK --interval=15s --timeout=15s --start-period=15s --retries=5 \
+    CMD curl -sf http://localhost:2053/ -o /dev/null || exit 1

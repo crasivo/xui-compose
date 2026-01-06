@@ -1,0 +1,16 @@
+# IDE
+/.idea
+/.vscode
+
+# Environment
+/.env
+/.env.local
+/.env.prod
+
+# Private
+*.key
+*.pass
+
+# Misc
+.DS_Store
+Thumbs.db

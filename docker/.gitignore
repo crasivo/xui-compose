@@ -1,0 +1,10 @@
+# Hidden
+/backup*
+/dump*
+/log*
+/secret*
+/volume*
+
+# Config
+docker-compose.yml
+Dockerfile

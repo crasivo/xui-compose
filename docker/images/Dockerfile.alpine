@@ -1,0 +1,63 @@
+# ----------------------------------------------------------------
+# Base image with Toolbox
+# ----------------------------------------------------------------
+
+ARG ALPINE_RELEASE=latest
+
+FROM alpine:${ALPINE_RELEASE} AS base
+
+COPY ./images/install /opt/docker
+
+RUN set -eux \
+    # Install base toolbox \
+    && apk add --no-cache --update \
+        ca-certificates \
+        curl \
+        gzip \
+        openssl \
+        tar \
+        tzdata \
+    && /opt/docker/bin/docker-image-cleanup.sh
+
+# ----------------------------------------------------------------
+# 3X-UI
+# ----------------------------------------------------------------
+
+FROM base
+
+ARG XUI_RELEASE
+
+# Legacy environments
+ENV XUI_LOG_LEVEL=info \
+    XUI_ENABLE_FAIL2BAN=false \
+    XUI_DEBUG=false
+
+RUN set -eux \
+    # Create group & user \
+    && addgroup -g 1000 xray \
+    && adduser -D -s /bin/bash -u 1000 -G xray xray \
+    # Install XRay & X-UI release \
+    && /opt/docker/bin/xui-install.sh "$XUI_RELEASE" \
+    # Prepare structure \
+    && mkdir -p /etc/x-ui /var/log/x-ui /var/log/xray \
+    && chown -R xray:xray /etc/x-ui /usr/local/x-ui /var/log/x-ui /var/log/xray \
+    && chmod 0700 /etc/x-ui /usr/local/x-ui /var/log/x-ui /var/log/xray \
+    # Prepare Docker entrypoint \
+    && mkdir -p /docker-entrypoint.d \
+    && ln -sf /opt/docker/bin/docker-entrypoint.sh /docker-entrypoint.sh \
+    && ln -sf /opt/docker/bin/xui-bootstrap.sh /docker-entrypoint.d/50-xui-bootstrap.sh \
+    # Cleanup Docker image \
+    && /opt/docker/bin/docker-image-cleanup.sh
+
+WORKDIR /usr/local/x-ui
+
+VOLUME ["/etc/x-ui", "/usr/local/x-ui/bin"]
+
+EXPOSE 2053/tcp 2096/tcp
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["/usr/local/x-ui/x-ui", "run"]
+
+HEALTHCHECK --interval=60s --timeout=15s --start-period=30s \
+    CMD curl -I 'http://localhost:2053'

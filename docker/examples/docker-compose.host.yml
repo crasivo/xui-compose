@@ -1,0 +1,20 @@
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Base configuration for 3X-UI
+# ----------------------------------------------------------------
+# Examole run:
+# docker compose -f docker-compose.host.yml up -d
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+name: 3x-ui
+
+services:
+  3x-ui:
+    image: crasivo/3x-ui:latest
+    container_name: 3x-ui
+    restart: unless-stopped
+    user: xray
+    environment:
+      - "XUI_ADMIN_USERNAME=admin"
+      - "XUI_ADMIN_PASSWORD=2UWGn9Ptw6mHmYEPqsvH"
+    hostname: 3x-ui
+    network_mode: host

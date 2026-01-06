@@ -1,0 +1,45 @@
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Base configuration for 3X-UI
+# ----------------------------------------------------------------
+# Examole run:
+# docker compose -f docker-compose.traefik.yml up -d
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+name: 3x-ui
+
+services:
+  3x-ui:
+    build:
+      context: .
+      dockerfile: images/alpine/Dockerfile.root
+      args:
+        - "ALPINE_RELEASE=latest"
+        - "XUI_RELEASE=latest"
+    container_name: 3x-ui
+    restart: unless-stopped
+    user: xray
+    environment:
+      - "XUI_ADMIN_USERNAME=admin"
+      - "XUI_ADMIN_PASSWORD=2UWGn9Ptw6mHmYEPqsvH"
+    hostname: 3x-ui
+    networks:
+      - public
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router: 3x-ui admin panel
+      - "traefik.http.routers.xui-panel-https.rule=Host(`3x-ui.traefik.docker`)"
+      - "traefik.http.routers.xui-panel-https.entryPoints=https"
+      - "traefik.http.routers.xui-panel-https.tls=true"
+      - "traefik.http.routers.xui-panel-https.service=xui-panel-https"
+      - "traefik.http.services.xui-panel-https.loadBalancer.server.port=2053"
+      # HTTPS router: 3x-ui user subscription
+      - "traefik.http.routers.xui-sub-https.rule=Host(`localhost`)&&PathPrefix(`/sub/`)"
+      - "traefik.http.routers.xui-sub-https.entryPoints=https"
+      - "traefik.http.routers.xui-sub-https.tls=true"
+      - "traefik.http.routers.xui-sub-https.service=xui-sub-https"
+      - "traefik.http.services.xui-sub-https.loadBalancer.server.port=2096"
+
+networks:
+  public:
+    external: true
+    name: traefik_public

@@ -17,8 +17,9 @@ S_ROOT_DIR=$(realpath "$S_CONTEXT_DIR/../")
 S_DOCKER_DIR="$S_ROOT_DIR/docker"
 
 # Secrets (workflow/env)
-DOCKER_IMAGE='crasivo/3x-ui'
-XUI_RELEASE='latest'
+DOCKER_BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+DOCKER_IMAGE="crasivo/3x-ui"
+XUI_VERSION=null
 
 # Buildx
 BUILDX_GITHUB=0
@@ -41,9 +42,6 @@ function _build_latest_version_alpine() {
     # Define tags
     local buildx_tags=()
     for prefix in "${buildx_image_prefixes[@]}"; do
-        buildx_tags+=("--tag=$prefix/$1:latest")
-        buildx_tags+=("--tag=$prefix/$1:alpine")
-        buildx_tags+=("--tag=$prefix/$1:alpine-$S_EXEC_DATE")
         buildx_tags+=("--tag=$prefix/$1:$full_version")
         buildx_tags+=("--tag=$prefix/$1:$full_version-alpine")
         buildx_tags+=("--tag=$prefix/$1:v$full_version")
@@ -52,6 +50,9 @@ function _build_latest_version_alpine() {
         buildx_tags+=("--tag=$prefix/$1:$minor_version-alpine")
         buildx_tags+=("--tag=$prefix/$1:v$minor_version")
         buildx_tags+=("--tag=$prefix/$1:v$minor_version-alpine")
+        buildx_tags+=("--tag=$prefix/$1:alpine")
+        buildx_tags+=("--tag=$prefix/$1:alpine-$S_EXEC_DATE")
+        buildx_tags+=("--tag=$prefix/$1:latest")
     done
 
     # shellcheck disable=SC2178
@@ -61,7 +62,8 @@ function _build_latest_version_alpine() {
     docker buildx build \
         --platform="$BUILDX_PLATFORM" \
         --file="$S_DOCKER_DIR/images/Dockerfile.alpine" \
-        --build-arg="XUI_RELEASE=$full_version" \
+        --build-arg="BUILD_DATE=$DOCKER_BUILD_DATE" \
+        --build-arg="XUI_VERSION=$full_version" \
         $buildx_tags \
         $BUILDX_ARGS \
         $S_DOCKER_DIR
@@ -89,7 +91,8 @@ function _build_specified_version_alpine() {
     docker buildx build \
         --platform="$BUILDX_PLATFORM" \
         --file="$S_DOCKER_DIR/images/Dockerfile.alpine" \
-        --build-arg="XUI_RELEASE=$full_version" \
+        --build-arg="BUILD_DATE=$DOCKER_BUILD_DATE" \
+        --build-arg="XUI_VERSION=$full_version" \
         $buildx_tags \
         $BUILDX_ARGS \
         $S_DOCKER_DIR
@@ -101,7 +104,7 @@ function _build_specified_version_alpine() {
 
 function _cmd_build_collection() {
     # shellcheck disable=SC2155
-    local releases="$(curl -sSL "https://api.github.com/repos/MHSanaei/3x-ui/releases?per_page=5" | jq -r '.[].tag_name')"
+    local releases="$(curl -s https://api.github.com/repos/MHSanaei/3x-ui/releases?per_page=5 | jq -r 'sort_by(.published_at) | .[].tag_name')"
     if [[ $releases == 'null' ]]; then
         echo "[ERROR] GitHub API: Request limit exceeded."
         exit 1
@@ -109,12 +112,12 @@ function _cmd_build_collection() {
 
     # shellcheck disable=SC2206
     releases=($releases)
-    _build_latest_version_alpine "$DOCKER_IMAGE" "${releases[0]}"
-    # shellcheck disable=SC2206
-    releases=(${releases[@]:1})
-    for v in "${releases[@]}"; do
+    for v in "${releases[@]:0:4}"; do
         _build_specified_version_alpine "$DOCKER_IMAGE" "$v"
     done
+
+    # Build latest
+    _build_latest_version_alpine "$DOCKER_IMAGE" "${releases[4]}"
 }
 
 function _cmd_build_latest() {
@@ -140,7 +143,7 @@ function _cmd_build_prev() {
 }
 
 function _cmd_build_specified() {
-    _build_specified_version_alpine "$DOCKER_IMAGE" "$XUI_RELEASE"
+    _build_specified_version_alpine "$DOCKER_IMAGE" "$XUI_VERSION"
 }
 
 # ----------------------------------------------------------------
@@ -170,7 +173,7 @@ case "$1" in
         ;;
     v*)
         C_ACTION=specified
-        XUI_RELEASE="$1"
+        XUI_VERSION="$1"
         shift
         ;;
     *)

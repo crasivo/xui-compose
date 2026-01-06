@@ -18,7 +18,7 @@ protocols such as VLESS, VMess, Trojan, Shadowsocks, and Hysteria2.
    rules.
 1. Security: Ability to restrict access to the panel by IP, change ports, and configure multi-user access with individual limits.
 
-### ⚠️ Disclaimer / Disclaimer
+### ⚠️ Disclaimer
 
 This project and the provided Docker images are intended for educational purposes and personal use only.
 

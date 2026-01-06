@@ -25,7 +25,22 @@ RUN set -eux \
 
 FROM base
 
-ARG XUI_RELEASE
+ARG BUILD_DATE
+ARG XUI_VERSION
+
+LABEL \
+    maintainer="Crasivo Dev <crasivodev@gmail.com>" \
+    org.opencontainers.image.authors="MHSanaei (Original), Crasivo Dev (Docker Maintainer)" \
+    org.opencontainers.image.title="3X-UI Panel" \
+    org.opencontainers.image.description="Multi-protocol control panel for Xray, supporting VLESS, VMess, Trojan, ShadowTLS, and Hysteria2. Built from MHSanaei/3x-ui." \
+    org.opencontainers.image.url="https://github.com/MHSanaei/3x-ui" \
+    org.opencontainers.image.source="https://github.com/MHSanaei/3x-ui" \
+    org.opencontainers.image.documentation="https://github.com/MHSanaei/3x-ui/blob/main/README.md" \
+    org.opencontainers.image.version="${XUI_VERSION}" \
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.licenses="GPL-3.0" \
+    org.opencontainers.image.vendor="MHSanaei & Contributors" \
+    org.opencontainers.image.base.name="docker.io/library/alpine:${ALPINE_RELEASE}"
 
 # Legacy environments
 ENV XUI_LOG_LEVEL=info \
@@ -37,7 +52,7 @@ RUN set -eux \
     && addgroup -g 1000 xray \
     && adduser -D -s /bin/bash -u 1000 -G xray xray \
     # Install XRay & X-UI release \
-    && /opt/docker/bin/xui-install.sh "$XUI_RELEASE" \
+    && /opt/docker/bin/xui-install.sh "$XUI_VERSION" \
     # Prepare structure \
     && mkdir -p /etc/x-ui /var/log/x-ui /var/log/xray \
     && chown -R xray:xray /etc/x-ui /usr/local/x-ui /var/log/x-ui /var/log/xray \

@@ -44,17 +44,25 @@ docker-ps: _docker_check_yaml
 	docker compose -f $(MAKEFILE_DIR)/docker/docker-compose.yml ps
 
 # ----------------------------------------------------------------
-# Docker: Build
+# Docker: Login & Logout
 # ----------------------------------------------------------------
 
-docker-build:
-	bash $(MAKEFILE_DIR)/bin/docker-build.sh latest
-docker-build-push:
-	bash $(MAKEFILE_DIR)/bin/docker-build.sh latest --push
-docker-buildx:
-	bash $(MAKEFILE_DIR)/bin/docker-buildx.sh latest
-docker-buildx-push:
-	bash $(MAKEFILE_DIR)/bin/docker-buildx.sh latest --push
+docker-login-dockerhub:
+	if [ -f $(MAKEFILE_DIR)/.dockerhub_registry.key ]; then cat $(MAKEFILE_DIR)/.dockerhub_registry.key | docker login docker.io -u crasivo --password-stdin; fi
+docker-login-github:
+	if [ -f $(MAKEFILE_DIR)/.github_registry.key ]; then cat $(MAKEFILE_DIR)/.github_registry.key | docker login ghcr.io -u crasivo --password-stdin; fi
+docker-login: \
+	docker-login-dockerhub \
+	docker-login-github
+
+docker-logout-dockerhub:
+	docker logout docker.io
+docker-logout-github:
+	docker logout ghcr.io
+docker-logout: \
+	docker-logout-dockerhub \
+	docker-logout-github
+
 
 # Fix arguments
 %:

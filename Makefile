@@ -24,7 +24,7 @@ _docker_check_secrets:
 _docker_check_volumes:
 	mkdir -p $(MAKEFILE_DIR)/docker/volumes/xui_db $(MAKEFILE_DIR)/docker/volumes/xui_logs
 _docker_check_yaml:
-	if [ ! -f $(MAKEFILE_DIR)/docker/docker-compose.yml ]; then cp $(MAKEFILE_DIR)/docker/docker-compose.host.yml $$(MAKEFILE_DIR)/docker/docker-compose.yml; fi
+	if [ ! -f $(MAKEFILE_DIR)/docker/docker-compose.yml ]; then cp $(MAKEFILE_DIR)/docker/examples/docker-compose.host.yml $$(MAKEFILE_DIR)/docker/docker-compose.yml; fi
 _docker_check: \
 	_docker_check_secrets \
 	_docker_check_volumes \
@@ -62,7 +62,6 @@ docker-logout-github:
 docker-logout: \
 	docker-logout-dockerhub \
 	docker-logout-github
-
 
 # Fix arguments
 %:

@@ -17,9 +17,11 @@ S_ROOT_DIR=$(realpath "$S_CONTEXT_DIR/../")
 S_DOCKER_DIR="$S_ROOT_DIR/docker"
 
 # Secrets (workflow/env)
-DOCKER_BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+ALPINE_VERSION=${ALPINE_VERSION:-}
+DOCKER_BUILD_DATE=${DOCKER_BUILD_DATE:-}
 DOCKER_IMAGE="crasivo/3x-ui"
-XUI_VERSION=null
+GIT_COMMIT_SHA=${GIT_COMMIT_SHA:-}
+XUI_VERSION=${XUI_VERSION:-}
 
 # Buildx
 BUILDX_GITHUB=0
@@ -42,17 +44,17 @@ function _build_latest_version_trixie() {
     # Define tags
     local buildx_tags=()
     for prefix in "${buildx_image_prefixes[@]}"; do
-        buildx_tags+=("--tag=$prefix/$1:$full_version-debian")
-        buildx_tags+=("--tag=$prefix/$1:$full_version-trixie")
-        buildx_tags+=("--tag=$prefix/$1:v$full_version-debian")
-        buildx_tags+=("--tag=$prefix/$1:v$full_version-trixie")
         buildx_tags+=("--tag=$prefix/$1:$minor_version-debian")
         buildx_tags+=("--tag=$prefix/$1:$minor_version-trixie")
-        buildx_tags+=("--tag=$prefix/$1:v$minor_version-debian")
+        buildx_tags+=("--tag=$prefix/$1:$full_version-debian")
+        buildx_tags+=("--tag=$prefix/$1:$full_version-trixie")
         buildx_tags+=("--tag=$prefix/$1:v$minor_version-trixie")
+        buildx_tags+=("--tag=$prefix/$1:v$minor_version-debian")
+        buildx_tags+=("--tag=$prefix/$1:v$full_version-trixie")
+        buildx_tags+=("--tag=$prefix/$1:v$full_version-debian")
         buildx_tags+=("--tag=$prefix/$1:trixie-$S_EXEC_DATE")
-        buildx_tags+=("--tag=$prefix/$1:trixie")
         buildx_tags+=("--tag=$prefix/$1:debian-$S_EXEC_DATE")
+        buildx_tags+=("--tag=$prefix/$1:trixie")
         buildx_tags+=("--tag=$prefix/$1:debian")
     done
 
@@ -64,6 +66,7 @@ function _build_latest_version_trixie() {
         --platform="$BUILDX_PLATFORM" \
         --file="$S_DOCKER_DIR/images/Dockerfile.trixie" \
         --build-arg="BUILD_DATE=$DOCKER_BUILD_DATE" \
+        --build-arg="GIT_COMMIT_SHA=$GIT_COMMIT_SHA" \
         --build-arg="XUI_VERSION=$full_version" \
         $buildx_tags \
         $BUILDX_ARGS \
@@ -79,10 +82,10 @@ function _build_specified_version_trixie() {
     # Define tags
     local buildx_tags=()
     for prefix in "${buildx_image_prefixes[@]}"; do
-        buildx_tags+=("--tag=$prefix/$1:$full_version-debian")
-        buildx_tags+=("--tag=$prefix/$1:$full_version-trixie")
-        buildx_tags+=("--tag=$prefix/$1:v$full_version-debian")
         buildx_tags+=("--tag=$prefix/$1:v$full_version-trixie")
+        buildx_tags+=("--tag=$prefix/$1:v$full_version-debian")
+        buildx_tags+=("--tag=$prefix/$1:$full_version-trixie")
+        buildx_tags+=("--tag=$prefix/$1:$full_version-debian")
     done
 
     # shellcheck disable=SC2178
@@ -93,6 +96,7 @@ function _build_specified_version_trixie() {
         --platform="$BUILDX_PLATFORM" \
         --file="$S_DOCKER_DIR/images/Dockerfile.trixie" \
         --build-arg="BUILD_DATE=$DOCKER_BUILD_DATE" \
+        --build-arg="GIT_COMMIT_SHA=$GIT_COMMIT_SHA" \
         --build-arg="XUI_VERSION=$full_version" \
         $buildx_tags \
         $BUILDX_ARGS \

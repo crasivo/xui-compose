@@ -2,7 +2,9 @@
 # Base image with Toolbox
 # ----------------------------------------------------------------
 
-FROM alpine:latest AS base
+ARG ALPINE_RELEASE=latest
+
+FROM alpine:$ALPINE_RELEASE AS base
 
 COPY ./images/install /opt/docker
 
@@ -25,6 +27,7 @@ FROM base
 
 ARG ALPINE_RELEASE=latest
 ARG BUILD_DATE=unknown
+ARG GIT_COMMIT_SHA=unknown
 ARG XUI_VERSION=latest
 
 LABEL \
@@ -35,11 +38,12 @@ LABEL \
     org.opencontainers.image.url="https://github.com/crasivo/xui-compose" \
     org.opencontainers.image.source="https://github.com/crasivo/xui-compose" \
     org.opencontainers.image.documentation="https://github.com/crasivo/xui-compose/blob/main/README.md" \
+    org.opencontainers.image.revision="${GIT_COMMIT_SHA}" \
     org.opencontainers.image.version="${XUI_VERSION}" \
     org.opencontainers.image.created="${BUILD_DATE}" \
     org.opencontainers.image.licenses="GPL-3.0" \
     org.opencontainers.image.vendor="MHSanaei & Contributors" \
-    org.opencontainers.image.base.name="docker.io/library/alpine:latest"
+    org.opencontainers.image.base.name="docker.io/library/alpine:${ALPINE_RELEASE}"
 
 # Legacy environments
 ENV XUI_LOG_LEVEL=info \
@@ -73,5 +77,5 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 
 CMD ["/usr/local/x-ui/x-ui", "run"]
 
-HEALTHCHECK --interval=60s --timeout=15s --start-period=30s \
-    CMD curl -I 'http://localhost:2053'
+HEALTHCHECK --interval=15s --timeout=15s --start-period=15s \
+    CMD curl -I -f 'http://localhost:2053' || exit 1

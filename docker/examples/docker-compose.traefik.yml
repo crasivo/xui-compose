@@ -33,7 +33,7 @@ services:
       - "traefik.http.routers.xui-panel-https.service=xui-panel-https"
       - "traefik.http.services.xui-panel-https.loadBalancer.server.port=2053"
       # HTTPS router: 3x-ui user subscription
-      - "traefik.http.routers.xui-sub-https.rule=Host(`localhost`)&&PathPrefix(`/sub/`)"
+      - "traefik.http.routers.xui-sub-https.rule=Host(`3x-ui.traefik.docker`)&&PathPrefix(`/sub/`)"
       - "traefik.http.routers.xui-sub-https.entryPoints=https"
       - "traefik.http.routers.xui-sub-https.tls=true"
       - "traefik.http.routers.xui-sub-https.service=xui-sub-https"

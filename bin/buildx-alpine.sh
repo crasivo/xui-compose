@@ -17,9 +17,10 @@ S_ROOT_DIR=$(realpath "$S_CONTEXT_DIR/../")
 S_DOCKER_DIR="$S_ROOT_DIR/docker"
 
 # Secrets (workflow/env)
-DOCKER_BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+DOCKER_BUILD_DATE=${DOCKER_BUILD_DATE:-}
 DOCKER_IMAGE="crasivo/3x-ui"
-XUI_VERSION=null
+GIT_COMMIT_SHA=${GIT_COMMIT_SHA:-}
+XUI_VERSION=${XUI_VERSION:-}
 
 # Buildx
 BUILDX_GITHUB=0
@@ -42,16 +43,16 @@ function _build_latest_version_alpine() {
     # Define tags
     local buildx_tags=()
     for prefix in "${buildx_image_prefixes[@]}"; do
-        buildx_tags+=("--tag=$prefix/$1:$full_version")
-        buildx_tags+=("--tag=$prefix/$1:$full_version-alpine")
-        buildx_tags+=("--tag=$prefix/$1:v$full_version")
         buildx_tags+=("--tag=$prefix/$1:v$full_version-alpine")
-        buildx_tags+=("--tag=$prefix/$1:$minor_version")
-        buildx_tags+=("--tag=$prefix/$1:$minor_version-alpine")
-        buildx_tags+=("--tag=$prefix/$1:v$minor_version")
+        buildx_tags+=("--tag=$prefix/$1:v$full_version")
         buildx_tags+=("--tag=$prefix/$1:v$minor_version-alpine")
-        buildx_tags+=("--tag=$prefix/$1:alpine")
+        buildx_tags+=("--tag=$prefix/$1:v$minor_version")
+        buildx_tags+=("--tag=$prefix/$1:$minor_version-alpine")
+        buildx_tags+=("--tag=$prefix/$1:$minor_version")
+        buildx_tags+=("--tag=$prefix/$1:$full_version-alpine")
+        buildx_tags+=("--tag=$prefix/$1:$full_version")
         buildx_tags+=("--tag=$prefix/$1:alpine-$S_EXEC_DATE")
+        buildx_tags+=("--tag=$prefix/$1:alpine")
         buildx_tags+=("--tag=$prefix/$1:latest")
     done
 
@@ -62,7 +63,9 @@ function _build_latest_version_alpine() {
     docker buildx build \
         --platform="$BUILDX_PLATFORM" \
         --file="$S_DOCKER_DIR/images/Dockerfile.alpine" \
+        --build-arg="ALPINE_RELEASE=$ALPINE_VERSION" \
         --build-arg="BUILD_DATE=$DOCKER_BUILD_DATE" \
+        --build-arg="GIT_COMMIT_SHA=$GIT_COMMIT_SHA" \
         --build-arg="XUI_VERSION=$full_version" \
         $buildx_tags \
         $BUILDX_ARGS \
@@ -78,10 +81,10 @@ function _build_specified_version_alpine() {
     # Define tags
     local buildx_tags=()
     for prefix in "${buildx_image_prefixes[@]}"; do
-        buildx_tags+=("--tag=$prefix/$1:$full_version")
-        buildx_tags+=("--tag=$prefix/$1:$full_version-alpine")
-        buildx_tags+=("--tag=$prefix/$1:v$full_version")
         buildx_tags+=("--tag=$prefix/$1:v$full_version-alpine")
+        buildx_tags+=("--tag=$prefix/$1:v$full_version")
+        buildx_tags+=("--tag=$prefix/$1:$full_version-alpine")
+        buildx_tags+=("--tag=$prefix/$1:$full_version")
     done
 
     # shellcheck disable=SC2178
@@ -91,7 +94,9 @@ function _build_specified_version_alpine() {
     docker buildx build \
         --platform="$BUILDX_PLATFORM" \
         --file="$S_DOCKER_DIR/images/Dockerfile.alpine" \
+        --build-arg="ALPINE_RELEASE=$ALPINE_VERSION" \
         --build-arg="BUILD_DATE=$DOCKER_BUILD_DATE" \
+        --build-arg="GIT_COMMIT_SHA=$GIT_COMMIT_SHA" \
         --build-arg="XUI_VERSION=$full_version" \
         $buildx_tags \
         $BUILDX_ARGS \
@@ -208,6 +213,11 @@ for i in "$@"; do
             ;;
     esac
 done
+
+# Check variables
+[[ -z "$ALPINE_VERSION" ]] && ALPINE_VERSION="$(curl -s https://api.github.com/repos/alpinelinux/docker-alpine/tags | jq -r '.[0].name')"
+[[ -z "$DOCKER_BUILD_DATE" ]] && DOCKER_BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+[[ -z "$GIT_COMMIT_SHA" ]] && GIT_COMMIT_SHA="$(git rev-parse --short HEAD)"
 
 # Execute action
 case "$C_ACTION" in

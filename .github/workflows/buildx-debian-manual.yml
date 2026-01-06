@@ -1,7 +1,12 @@
-name: Build & Publish latest 3X-UI Alpine image
+name: Build & Publish 3X-UI Debian images (Manual)
 
 on:
   workflow_dispatch:
+    inputs:
+      buildx_action:
+        description: 'Build release (prev/latest/collection)'
+        required: true
+        default: 'latest'
 
 jobs:
   build:
@@ -27,4 +32,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run build script
-        run: ./bin/buildx-debian.sh latest --push --github --dockerhub
+        run: ./bin/buildx-debian.sh ${{ github.event.inputs.buildx_action }} --push --github --dockerhub

@@ -27,8 +27,8 @@ RUN set -eux \
 
 FROM base
 
-ARG BUILD_DATE
-ARG XUI_VERSION
+ARG BUILD_DATE=unknown
+ARG XUI_VERSION=latest
 
 LABEL \
     maintainer="Crasivo Dev <crasivodev@gmail.com>" \
@@ -42,7 +42,7 @@ LABEL \
     org.opencontainers.image.created="${BUILD_DATE}" \
     org.opencontainers.image.licenses="GPL-3.0" \
     org.opencontainers.image.vendor="MHSanaei & Contributors" \
-    org.opencontainers.image.base.name="docker.io/library/alpine:${ALPINE_RELEASE}"
+    org.opencontainers.image.base.name="docker.io/library/debian:13-slim"
 
 # Legacy environments
 ENV XUI_LOG_LEVEL=info \

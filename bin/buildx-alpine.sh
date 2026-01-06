@@ -133,7 +133,7 @@ function _cmd_build_latest() {
 
 function _cmd_build_prev() {
     # shellcheck disable=SC2155
-    local release="$(curl -s https://api.github.com/repos/OWNER/REPO/releases | jq -r '.[1].tag_name')"
+    local release="$(curl -s https://api.github.com/repos/MHSanaei/3x-ui/releases | jq -r '.[1].tag_name')"
     if [[ $release == 'null' ]]; then
         echo "[ERROR] GitHub API: Request limit exceeded."
         exit 1

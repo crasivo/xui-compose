@@ -2,9 +2,7 @@
 # Base image with Toolbox
 # ----------------------------------------------------------------
 
-ARG ALPINE_RELEASE=latest
-
-FROM alpine:${ALPINE_RELEASE} AS base
+FROM alpine:latest AS base
 
 COPY ./images/install /opt/docker
 
@@ -25,8 +23,9 @@ RUN set -eux \
 
 FROM base
 
-ARG BUILD_DATE
-ARG XUI_VERSION
+ARG ALPINE_RELEASE=latest
+ARG BUILD_DATE=unknown
+ARG XUI_VERSION=latest
 
 LABEL \
     maintainer="Crasivo Dev <crasivodev@gmail.com>" \
@@ -40,7 +39,7 @@ LABEL \
     org.opencontainers.image.created="${BUILD_DATE}" \
     org.opencontainers.image.licenses="GPL-3.0" \
     org.opencontainers.image.vendor="MHSanaei & Contributors" \
-    org.opencontainers.image.base.name="docker.io/library/alpine:${ALPINE_RELEASE}"
+    org.opencontainers.image.base.name="docker.io/library/alpine:latest"
 
 # Legacy environments
 ENV XUI_LOG_LEVEL=info \

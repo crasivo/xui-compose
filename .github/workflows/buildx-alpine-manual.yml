@@ -33,3 +33,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run build script
         run: ./bin/buildx-alpine.sh ${{ github.event.inputs.buildx_action }} --push --github --dockerhub
+        env:
+          DOCKER_BUILD_DATE: ${{ github.event.repository.pushed_at || github.event.head_commit.timestamp }}
+          GIT_COMMIT_SHA: ${{ github.sha }}

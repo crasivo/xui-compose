@@ -214,6 +214,10 @@ for i in "$@"; do
     esac
 done
 
+# Check variables
+[[ -z "$DOCKER_BUILD_DATE" ]] && DOCKER_BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+[[ -z "$GIT_COMMIT_SHA" ]] && GIT_COMMIT_SHA="$(git rev-parse --short HEAD)"
+
 # Execute action
 case "$C_ACTION" in
     collection)
